@@ -11,6 +11,8 @@
 #undef float
 #undef round
 #define DHTPIN 3
+// Pin reading sensor
+#define FLOWSENSORPIN 2
 
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)
@@ -52,9 +54,23 @@ char server[] = "api.pushingbox.com";
 int flowSensor1 = 0;
 bool sensorStatus;
 bool currentStatus;
-unsigned long timer = 0;
-unsigned long deltaTime = 0;
+//unsigned long timer = 0;
+//unsigned long deltaTime = 0;
 unsigned long testTime = 0;
+// count number of pulses
+int pulses = 0;
+// last state of sensor
+bool last_state;
+// check current state of sensor
+bool check_state;
+// calculate flow rate
+float flowrate;
+// time
+unsigned long last_time = 0;
+unsigned long deltaTime = 1000;
+float deltaVolume;
+static char flow[15];
+
 EthernetClient client;
  
  
@@ -85,20 +101,21 @@ void loop(){
 //  
 //  int avtemp=temp_av/(del);
 //  temp_av=6;
-
-
-  currentStatus = digitalRead(3);
-  if ((currentStatus == LOW) && (sensorStatus == HIGH)){
-    flowSensor1++;
-    if (flowSensor1 % 100 == 0){
-      deltaTime = millis()-timer;
-      timer = millis();
-      Serial.println(deltaTime);
-      Serial.println(flowSensor1);
-    }
-//    Serial.println(millis());
+ check_state = digitalRead(FLOWSENSORPIN);
+  if ((check_state == LOW) && (last_state == HIGH)) {
+    pulses++;
   }
-  sensorStatus = currentStatus;
+  if (last_time + deltaTime < millis()){
+      deltaVolume = pulses * (1.0/485.0) * (0.264172);
+      flowrate = deltaVolume * 60.0 / (deltaTime/1000.0);
+      Serial.print("flowrate = ");
+      Serial.println(flowrate,4);
+      dtostrf(flowrate,6,4,flow);
+      pulses = 0;
+      last_time = millis();
+    }
+  last_state  = check_state;
+
 //  Serial.println();    
 //  Serial.println(currentStatus);    
 //  Serial.println(sensorStatus);    
@@ -110,7 +127,7 @@ void loop(){
     {
       k=0;
       Serial.println("connected");
-      sprintf(postmsg,"GET /pushingbox?devid=v2C8873F7EC054A1&status=%d HTTP/1.1",flowSensor1);  // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      sprintf(postmsg,"GET /pushingbox?devid=v2C8873F7EC054A1&status=%s HTTP/1.1",flow);  // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
       client.println(postmsg);
       client.println("Host: api.pushingbox.com");
       client.println("Connection: close");
@@ -144,4 +161,3 @@ double Fahrenheit(double celsius) // Function to convert to Fahrenheit
 {
 	return 1.8 * celsius + 32;
 }
-
