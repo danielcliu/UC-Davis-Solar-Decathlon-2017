@@ -31,7 +31,8 @@ DHT dht(DHTPIN, DHTTYPE);
 byte mac[] = {0x2C, 0xF7, 0xF1, 0x08, 0x03, 0x3C };  //Replace with your Ethernet shield MAC
 byte ip[] = {192, 168, 10, 129};  // Your Arduino device IP address
 
-char devid = "v2C8873F7EC054A1";  // THIS IS THE DEVICE ID FROM PUSHINGBOX
+//char devid = "v2C8873F7EC054A1";  // THIS IS THE DEVICE ID FROM PUSHINGBOX
+char devid = "v067DBD4863902C2";  // THIS IS THE DEVICE ID FROM PUSHINGBOX
 
 int del = 5; // Amount of seconds delay between posting to google docs.
 
@@ -110,7 +111,50 @@ void loop() {
     {
       //k = 0;
       Serial.println("connected");
-      sprintf(postmsg, "GET /pushingbox?devid=v2C8873F7EC054A1&status=%s HTTP/1.1",temp_f); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      //sprintf(postmsg, "GET /pushingbox?devid=v2C8873F7EC054A1&status=%s HTTP/1.1",temp_f); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      sprintf(postmsg, "GET /pushingbox?devid=v067DBD4863902C2&status=%s HTTP/1.1",hum); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      client.println(postmsg);
+      client.println("Host: api.pushingbox.com");
+      client.println("Connection: close");
+      client.println();
+
+      Serial.println(postmsg);
+      Serial.println("Host: api.pushingbox.com");
+      Serial.println("Connection: close");
+      Serial.println();
+
+      //delay(100);
+      client.stop();
+    }
+    
+    delay(delayMS);
+    if (client.connect(server, 80)== 1)
+    {
+      //k = 0;
+      Serial.println("connected");
+      //sprintf(postmsg, "GET /pushingbox?devid=v2C8873F7EC054A1&status=%s HTTP/1.1",temp_f); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      sprintf(postmsg, "GET /pushingbox?devid=v58A493004D7C72E&status=%s HTTP/1.1",temp_f); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      client.println(postmsg);
+      client.println("Host: api.pushingbox.com");
+      client.println("Connection: close");
+      client.println();
+
+      Serial.println(postmsg);
+      Serial.println("Host: api.pushingbox.com");
+      Serial.println("Connection: close");
+      Serial.println();
+
+      //delay(100);
+      client.stop();
+    }
+
+    delay(delayMS);
+    if (client.connect(server, 80)== 1)
+    {
+      //k = 0;
+      Serial.println("connected");
+      //sprintf(postmsg, "GET /pushingbox?devid=v2C8873F7EC054A1&status=%s HTTP/1.1",temp_f); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
+      sprintf(postmsg, "GET /pushingbox?devid=vCC13DD95FD9DB19&status=%s HTTP/1.1",heat_index); // NOTE** In this line of code you can see where the temperature value is inserted into the wed address. It follows 'status=' Change that value to whatever you want to post.
       client.println(postmsg);
       client.println("Host: api.pushingbox.com");
       client.println("Connection: close");
