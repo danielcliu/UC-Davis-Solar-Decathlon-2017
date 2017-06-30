@@ -8,3 +8,5 @@ https://github.com/adafruit/Ethernet2
 https://github.com/adafruit/DHT-sensor-library
 
 https://github.com/adafruit/Adafruit_Sensor
+
+https://github.com/adafruit/Adafruit-Flow-Meter
